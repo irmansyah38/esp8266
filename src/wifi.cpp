@@ -7,8 +7,6 @@ void setupWifi()
 
   WiFi.mode(WIFI_STA);
 
-  Serial.begin(115200);
-
   bool res;
 
   res = wm.autoConnect("aquascape", "aquascape");

@@ -60,7 +60,6 @@ char index_html[] PROGMEM = R"rawliteral(
       animation: rotate 10s linear infinite;
     }
 
-
     .wave-02 {
       position: absolute;
       width: 150%;
@@ -342,73 +341,60 @@ char index_html[] PROGMEM = R"rawliteral(
 </html>
 )rawliteral";
 
-AsyncWebServer server(8080);
+ESP8266WebServer server(8080);
 
-void handleTokenSubmit(AsyncWebServerRequest *request)
+void handleRoot()
 {
-  try
+  server.send(200, "text/html", index_html);
+}
+
+void handleTokenSubmit()
+{
+
+  String tokenValue, chatid;
+
+  // Cek apakah request memiliki parameter "token" dan "chatid"
+  if (server.hasArg("token") && server.hasArg("chatid"))
   {
-    String tokenValue, chatid;
-    bool validInput = false;
+    tokenValue = server.arg("token");
+    chatid = server.arg("chatid");
 
-    while (!validInput)
-    {
-      if (request->hasParam("token", true) && request->hasParam("chatid", true))
-      {
-        tokenValue = request->getParam("token", true)->value();
-        chatid = request->getParam("chatid", true)->value();
-        validInput = true;
-      }
-      else
-      {
-
-        // kirim object
-        const char *json = "{\"status\":\"failed\"}";
-        request->send(400, "application/json", json);
-      }
-    }
     // Lakukan sesuatu dengan nilai token, misalnya menyimpannya atau mengirimkannya ke BotFather
     bot.updateToken(tokenValue);
 
-    if (bot.getMe() == false)
+    if (!bot.getMe())
     {
-      validInput = false;
-
-      // kirim object
+      // Kirim respons JSON jika token tidak valid
       const char *json = "{\"status\":\"failed\"}";
-      request->send(400, "application/json", json);
+      server.send(400, "application/json", json);
     }
-    else
-    {
-      // membuat json
-      const char *json = "{\"status\":\"success\"}";
-      request->send(200, "application/json", json);
 
-      // kirim chat ke telegram
-      chatID = chatid;
-      bot.sendMessage(chatID, "good luck you are conecting", "");
-      // mengakhiri server
-      botCondition = true;
-    }
+    // Kirim respons JSON berhasil
+    const char *json = "{\"status\":\"success\"}";
+    server.send(200, "application/json", json);
+
+    // Kirim chat ke telegram
+    chatID = chatid;
+    bot.sendMessage(chatID, "good luck you are connecting", "");
+    // Menghentikan server
+    botCondition = true;
   }
-  catch (const std::exception &e)
+  else
   {
-    Serial.println("Exception in handleTokenSubmit:");
-    Serial.println(e.what());
-    request->send(500, "text/plain", "Internal Server Error");
+    // Kirim respons JSON jika token tidak valid
+    const char *json = "{\"status\":\"failed\"}";
+    server.send(400, "application/json", json);
   }
 }
 
-void setupWeb()
+void setupWebsite()
 {
-  // displayURL();
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
-            { request->send(200, "text/html", index_html); });
-
+  server.on("/", HTTP_GET, handleRoot);
   server.on("/token", HTTP_POST, handleTokenSubmit);
   server.begin();
-  while (botCondition == false)
-  {
-  }
-  server.end();
+}
+
+void handleClient()
+{
+  server.handleClient();
 }

@@ -2,7 +2,7 @@
 #define VARIABLE_H
 
 // library for website
-#include <ESPAsyncWebServer.h>
+#include <ESP8266WebServer.h>
 // library for telegram
 #include <UniversalTelegramBot.h>
 // wifiClientSecure
@@ -17,10 +17,6 @@ extern UniversalTelegramBot bot;
 extern String chatID;
 // make variable bot condition
 extern bool botCondition;
-
-// Checks for new messages every 1 second.
-int botRequestDelay;
-unsigned long lastTimeBotRan;
 
 // make function for execute telegram bot
 void excuteTelegramBot();

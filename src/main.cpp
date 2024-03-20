@@ -1,25 +1,21 @@
 #include <Arduino.h>
-#include <wifi.h>
 #include "variable.h"
 #include "website.h"
+#include "wifi.h"
 
-// put function declarations here:
+X509List cert(TELEGRAM_CERTIFICATE_ROOT);
 
 void setup()
 {
-  X509List cert(TELEGRAM_CERTIFICATE_ROOT);
+  Serial.begin(115200);
   configTime(0, 0, "pool.ntp.org"); // get UTC time via NTP
-  // client.setTrustAnchors(&cer);
-  Serial.begin(9600);
+  client.setTrustAnchors(&cert);    // Add root
   setupWifi();
   setupWebsite();
-  // put your setup code here, to run once:
 }
 
 void loop()
 {
-  if (botCondition == true)
-  {
-    excuteTelegramBot();
-  }
+  handleClient();
+  excuteTelegramBot();
 }
