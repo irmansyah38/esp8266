@@ -11,12 +11,8 @@ void setupWifi()
 
   res = wm.autoConnect("aquascape", "aquascape");
 
-  if (!res)
+  if (res == true)
   {
-    Serial.print("Gagal terhubung koneksi");
-  }
-  else
-  {
-    Serial.print("Terhubung koneksi");
+    connectedWifi = true;
   }
 }

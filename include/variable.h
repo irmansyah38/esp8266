@@ -8,6 +8,13 @@
 // wifiClientSecure
 #include <WiFiClientSecure.h>
 
+// wifi
+#include <WiFiManager.h>
+#include <ESP8266WiFi.h>
+
+// terhubung wifi
+extern bool connectedWifi;
+
 // make object client
 extern WiFiClientSecure client;
 

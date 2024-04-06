@@ -4,6 +4,7 @@
 #include "wifi.h"
 
 X509List cert(TELEGRAM_CERTIFICATE_ROOT);
+bool sekali = true;
 
 void setup()
 {
@@ -18,4 +19,17 @@ void loop()
 {
   handleClient();
   excuteTelegramBot();
+
+  if (connectedWifi)
+  {
+    if (botCondition)
+    {
+      Serial.println("Terhubung telegram");
+    }
+    else
+    {
+      Serial.print(WiFi.localIP());
+      Serial.println("/8080");
+    }
+  }
 }

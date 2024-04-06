@@ -7,6 +7,9 @@ UniversalTelegramBot bot("update token", client);
 // variable chatid for bot
 String chatID = "";
 
+// terhubung wifi
+bool connectedWifi = false;
+
 // bot condition variable for ensure that have connected with telegram
 bool botCondition = false;
 
@@ -36,22 +39,21 @@ void handleNewMessages(int numNewMessages)
 
     String from_name = bot.messages[i].from_name;
 
-    if (text == "/start")
+    if (text == "/mulai")
     {
       String welcome = "Welcome, " + from_name + ".\n";
-      welcome += "Use the following commands to control your outputs.\n\n";
-      welcome += "/led_on to turn GPIO ON \n";
-      welcome += "/led_off to turn GPIO OFF \n";
-      welcome += "/state to request current GPIO state \n";
+      welcome += "Gunakan perintah yang ada dibawah ini.\n\n";
+      welcome += "/beri-makan untuk memberi pakan ikan \n";
+      welcome += "/keadaan untuk mengetahui keadaan aquascape\n";
       bot.sendMessage(chat_id, welcome, "");
     }
 
-    if (text == "/led_on")
+    if (text == "/beri-makan")
     {
-      bot.sendMessage(chat_id, "LED state set to ON", "");
+      bot.sendMessage(chat_id, "Sudah memberi makan", "");
     }
 
-    if (text == "/led_off")
+    if (text == "/keadaan")
     {
       bot.sendMessage(chat_id, "LED state set to OFF", "");
     }
