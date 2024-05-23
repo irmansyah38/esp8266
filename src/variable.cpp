@@ -4,14 +4,29 @@
 WiFiClientSecure client;
 UniversalTelegramBot bot("update token", client);
 
+// make object wifi
+WiFiManager wm;
+
 // variable chatid for bot
 String chatID = "";
 
 // terhubung wifi
 bool connectedWifi = false;
 
+// sensors value
+float phValue;
+float suhuValue;
+
+// notifikasi
+bool notifikasi = true;
+bool emptyAsam;
+bool emptyBasa;
+
 // bot condition variable for ensure that have connected with telegram
 bool botCondition = false;
+
+// servo
+Servo myservo;
 
 // Checks for new messages every 1 second.
 int botRequestDelay = 1000;
@@ -41,21 +56,42 @@ void handleNewMessages(int numNewMessages)
 
     if (text == "/mulai")
     {
-      String welcome = "Welcome, " + from_name + ".\n";
-      welcome += "Gunakan perintah yang ada dibawah ini.\n\n";
-      welcome += "/beri-makan untuk memberi pakan ikan \n";
-      welcome += "/keadaan untuk mengetahui keadaan aquascape\n";
+      String welcome = "Selamat datang, " + from_name + ".\n";
+      welcome += "Gunakan perintah yang ada di bawah ini.\n\n";
+      welcome += "/beri_pakan untuk memberi pakan  \n";
+      welcome += "/status untuk mengetahui keadaan aquascape \n";
+
+      if (notifikasi)
+      {
+        welcome += "/matikan_notifikasi untuk menghentikan notfikasi \n";
+      }
+      else
+      {
+        welcome += "/nyalakan_notifikasi untuk menyalakan notfikasi \n";
+      }
+
       bot.sendMessage(chat_id, welcome, "");
     }
 
-    if (text == "/beri-makan")
+    if (text == "/beri_pakan")
     {
-      bot.sendMessage(chat_id, "Sudah memberi makan", "");
+      myservo.write(180);
+      delay(2000);
+      myservo.write(0);
+      bot.sendMessage(chat_id, "Sudah memberi pakan", "");
     }
 
-    if (text == "/keadaan")
+    if (text == "/status")
     {
-      bot.sendMessage(chat_id, "LED state set to OFF", "");
+      String message = "Suhu: " + String(suhuValue) + "\n";
+      message += "PH  : " + String(phValue) + "\n";
+      bot.sendMessage(chat_id, message, "");
+    }
+
+    if (text == "/matikan_notifikasi" || text == "/nyalakan_notifikasi")
+    {
+      notifikasi = !notifikasi;
+      bot.sendMessage(chat_id, "OK!", "");
     }
   }
 }

@@ -3,8 +3,6 @@
 void setupWifi()
 {
 
-  WiFiManager wm;
-
   WiFi.mode(WIFI_STA);
 
   bool res;

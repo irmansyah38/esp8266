@@ -375,9 +375,24 @@ void handleTokenSubmit()
 
     // Kirim chat ke telegram
     chatID = chatid;
-    bot.sendMessage(chatID, "good luck you are connecting", "");
     // Menghentikan server
     botCondition = true;
+
+    String welcome = "Selamat datang.\n";
+    welcome += "Gunakan perintah yang ada di bawah ini.\n\n";
+    welcome += "/beri_pakan untuk memberi pakan  \n";
+    welcome += "/status untuk mengetahui keadaan aquascape \n";
+
+    if (notifikasi)
+    {
+      welcome += "/matikan_notifikasi untuk menghentikan notfikasi \n";
+    }
+    else
+    {
+      welcome += "/nyalakan_notifikasi untuk menyalakan notfikasi \n";
+    }
+
+    bot.sendMessage(chatID, welcome, "");
   }
   else
   {
