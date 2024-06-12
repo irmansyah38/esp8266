@@ -312,7 +312,7 @@ char index_html[] PROGMEM = R"rawliteral(
     try {
       const tokenValue = document.getElementById("token").value;
       const chatidValue = document.getElementById("chatid").value;
-      const response = await fetch(`http://${window.location.hostname}:8080/token`,{
+      const response = await fetch(`http://${window.location.hostname}:90/token`,{
         method : 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -341,7 +341,7 @@ char index_html[] PROGMEM = R"rawliteral(
 </html>
 )rawliteral";
 
-ESP8266WebServer server(8080);
+ESP8266WebServer server(90);
 
 void handleRoot()
 {

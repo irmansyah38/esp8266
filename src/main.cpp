@@ -9,31 +9,31 @@ SoftwareSerial mySerial(12, 16);
 StaticJsonDocument<200> doc;
 X509List cert(TELEGRAM_CERTIFICATE_ROOT);
 bool errjson;
+bool interval1 = 1000;
+unsigned long previousMillis1 = 0;
 
 void send()
 {
-  if (mySerial.available() == 0)
+  if (botCondition)
   {
-    if (botCondition)
+    mySerial.print("s");
+    mySerial.print('\n');
+  }
+  else
+  {
+    if (connectedWifi)
     {
-      mySerial.print("sudah");
+      IPAddress ip = WiFi.localIP();
+      mySerial.print(ip.toString());
       mySerial.print('\n');
     }
     else
     {
-      if (connectedWifi)
-      {
-        IPAddress ip = WiFi.localIP();
-        mySerial.print(ip.toString());
-        mySerial.print('\n');
-      }
-      else
-      {
-        mySerial.print("belum");
-        mySerial.print('\n');
-      }
+      mySerial.print("b");
+      mySerial.print('\n');
     }
   }
+  delay(500);
 }
 
 void received()
@@ -52,7 +52,6 @@ void received()
     }
     else
     {
-      errjson = false;
       suhuValue = doc["suhu"];
       phValue = doc["ph"];
       emptyAsam = doc["emptyAsam"];
@@ -61,12 +60,13 @@ void received()
       doc.clear();
     }
   }
+  delay(100);
 }
 
 void setup()
 {
-  // mySerial.begin(9600);
   Serial.begin(9600);
+  mySerial.begin(9600);
   configTime(0, 0, "pool.ntp.org"); // get UTC time via NTP
   client.setTrustAnchors(&cert);    // Add root
   setupWifi();
@@ -83,29 +83,29 @@ void loop()
   if (botCondition)
   {
     excuteTelegramBot();
-    /* code */
 
-    // if (notifikasi)
-    // {
-    //   if (emptyAsam)
-    //   {
-    //     bot.sendMessage(chatID, "Segera isi ulang cairan asam.", "");
-    //   }
+    if (notifikasi)
+    {
+      unsigned long currentMillis = millis();
+      if (currentMillis - previousMillis1 >= interval1 * 120)
+      {
+        previousMillis1 = currentMillis;
+        if (emptyAsam)
+        {
+          bot.sendMessage(chatID, "Segera isi ulang cairan asam.", "");
+        }
 
-    //   if (emptyBasa)
-    //   {
-    //     bot.sendMessage(chatID, "Segera isi ulang cairan basa.", "");
-    //   }
-
-    //   if (errjson)
-    //   {
-    //     bot.sendMessage(chatID, "Json error.", "");
-    //   }
-    // }
+        if (emptyBasa)
+        {
+          bot.sendMessage(chatID, "Segera isi ulang cairan basa.", "");
+        }
+      }
+    }
   }
   else
   {
     handleClient();
   }
   received();
+  send();
 }
